@@ -5,15 +5,14 @@ const path = require('path')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
-
+const swaggerDocs = require('./public/api-docs/swagger');
 const errorHandler = require('./middlewares/error')
 
 require('dotenv').config()
 
 
 const app = express()
-
-// swaggerDocs(app, process.env.PORT);
+ swaggerDocs(app, process.env.PORT);
 
 const connDB = require('./config/dbConn')
 connDB()
@@ -25,7 +24,7 @@ app.use(fileUpload())
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser())
 
-// app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')))
 
 
 app.use('/post', require('./routes/post'))
