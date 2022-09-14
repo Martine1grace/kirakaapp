@@ -10,6 +10,7 @@ const getAllPost = asyncHandler(async (req, res, next) => {
   });
   res.status(200).json({
     success: true,
+    count: post.length,
     data: post,
   });
 });
@@ -24,11 +25,11 @@ const createPost = asyncHandler(async (req, res, next) => {
 });
 
 const getOnePost = asyncHandler(async (req, res, next) => {
-  const ispostExist = await Post.findById(req.params._id);
+  const ispostExist = await Post.findById(req.params.id);
   if (!ispostExist)
-    next(new ErrorResponse(`post with id ${req.params._id} not exist`, 404));
+    next(new ErrorResponse(`post with id ${req.params.id} not exist`, 404));
   else {
-    const post = await Post.find({ _id: req.params._id });
+    const post = await Post.find({ _id: req.params.id });
     res.status(200).json({
       success: true,
       data: post,
@@ -36,21 +37,22 @@ const getOnePost = asyncHandler(async (req, res, next) => {
   }
 });
 const deleteOnePost = asyncHandler(async (req, res, next) => {
-  const ispostExist = await Post.findById(req.params._id);
+  const ispostExist = await Post.findById(req.params.id);
   if (!ispostExist)
-    next(new ErrorResponse(`post with id ${req.params._id} not exist`, 404));
+    next(new ErrorResponse(`post with id ${req.params.id} not exist`, 404));
   else {
-    const post = await Post.deleteOne({ _id: req.params._id });
+    const post = await Post.deleteOne({ _id: req.params.id });
+
     res.status(200).json({
       success: true,
     });
   }
 });
 const updatePost = asyncHandler(async (req, res, next) => {
-  const ispostExist = await Post.findById(req.params._id);
+  const ispostExist = await Post.findById(req.params.id);
   if (!ispostExist)
-    next(new ErrorResponse(`post with id ${req.params._id} not exist`, 404));
-  const post = await Post.findByIdAndUpdate(req.params._id, req.body, {
+    next(new ErrorResponse(`post with id ${req.params.id} not exist`, 404));
+  const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
   res.status(200).json({
@@ -68,8 +70,6 @@ const photoUpload = asyncHandler(async (req, res, next) => {
     );
   }
 
-
-
   if (!req.files) {
     return next(new ErrorResponse(`Please upload a file`, 400));
   }
@@ -77,7 +77,7 @@ const photoUpload = asyncHandler(async (req, res, next) => {
   const file = req.files.file;
 
   // Make sure the image is a photo
-  if (!file.mimetype.startsWith('image')) {
+  if (!file.mimetype.startsWith("image")) {
     return next(new ErrorResponse(`Please upload an image file`, 400));
   }
 
@@ -94,7 +94,7 @@ const photoUpload = asyncHandler(async (req, res, next) => {
   // Create custom filename
   file.name = `photo_${post._id}${path.parse(file.name).ext}`;
 
-  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
     if (err) {
       console.error(err);
       return next(new ErrorResponse(`Problem with file upload`, 500));
@@ -104,11 +104,10 @@ const photoUpload = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: file.name
+      data: file.name,
     });
   });
 });
-
 
 module.exports = {
   photoUpload,

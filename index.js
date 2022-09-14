@@ -1,40 +1,41 @@
-const mongoose = require('mongoose')
-const express = require('express')
-const fileUpload = require('express-fileupload')
-const path = require('path')
-const cookieParser = require('cookie-parser')
-const cors = require('cors')
+const mongoose = require("mongoose");
+const express = require("express");
+const fileUpload = require("express-fileupload");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
+const errorHandler = require("./middlewares/error");
 
-const errorHandler = require('./middlewares/error')
+require("dotenv").config();
 
-require('dotenv').config()
-
-
-const app = express()
+const app = express();
 
 // swaggerDocs(app, process.env.PORT);
 
-const connDB = require('./config/dbConn')
-connDB()
+const connDB = require("./config/dbConn");
+connDB();
 
-app.use(express.json())
+app.use(express.json());
 
-app.use(fileUpload())
+app.use(fileUpload());
 
 app.use(cors({ origin: true, credentials: true }));
-app.use(cookieParser())
+app.use(cookieParser());
 
 // app.use(express.static(path.join(__dirname, 'public')))
 
+app.use("/post", require("./routes/post"));
+app.use("/auth", require("./routes/auth"));
+app.use("/views", require("./routes/views"));
+app.use("/user", require("./routes/user"));
+app.use("/comment", require("./routes/comment"));
+app.use("/announcement", require("./routes/announcement"));
+app.use(errorHandler);
 
-app.use('/post', require('./routes/post'))
-app.use('/user', require('./routes/user'))
-app.use('/comment', require('./routes/comment'))
-app.use('/announcement', require('./routes/announcement'))
-app.use(errorHandler)
-
-mongoose.connection.once('open', ()=>{
-    console.log('DB connected successfully')
-    app.listen(process.env.PORT || 3500,()=>{console.log(`server is running on port ${process.env.PORT}`)})
-})
+mongoose.connection.once("open", () => {
+  console.log("DB connected successfully");
+  app.listen(process.env.PORT || 3500, () => {
+    console.log(`server is running on port ${process.env.PORT}`);
+  });
+});

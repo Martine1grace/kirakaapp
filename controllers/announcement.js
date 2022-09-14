@@ -12,7 +12,7 @@ const getAllAnnouncement = async (req, res, next) =>{
     }
     
 }
-const createAnnouncement = async (req, res, next) =>{
+const  createAnnouncement = async (req, res, next) =>{
     try {
         const announcement = new Announcement(req.body)
         const newannouncement = await announcement.save()
