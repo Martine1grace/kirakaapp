@@ -6,7 +6,8 @@ const ErrorResponse = require("../utils/errorResponses");
 const User = require("../models/user");
 
 const getAllUser = asyncHandler(async (req, res, next) => {
-  const user = await User.find().populate("posts");
+  // console.log(req.user.id);
+  const user = await User.find();
   res.status(200).json({
     success: true,
     data: user,
@@ -26,11 +27,11 @@ const createUser = asyncHandler(async (req, res, next) => {
 });
 
 const getOneUser = asyncHandler(async (req, res, next) => {
-  const isuserExist = await User.findById(req.params._id);
+  const isuserExist = await User.findById(req.params.id);
   if (!isuserExist)
-    next(new ErrorResponse(`user with id ${req.params._id} not exist`, 404));
+    next(new ErrorResponse(`user with id ${req.params.id} not exist`, 404));
   else {
-    const user = await User.find({ _id: req.params._id });
+    const user = await User.find({ _id: req.params.id });
     res.status(200).json({
       success: true,
       data: user,
@@ -38,9 +39,9 @@ const getOneUser = asyncHandler(async (req, res, next) => {
   }
 });
 const deleteOneUser = asyncHandler(async (req, res, next) => {
-  const isuserExist = await User.findById(req.params._id);
+  const isuserExist = await User.findById(req.params.id);
   if (!isuserExist)
-    next(new ErrorResponse(`user with id ${req.params._id} not exist`, 404));
+    next(new ErrorResponse(`user with id ${req.params.id} not exist`, 404));
   else {
     isuserExist.remove();
     res.status(200).json({
@@ -49,10 +50,10 @@ const deleteOneUser = asyncHandler(async (req, res, next) => {
   }
 });
 const updateUser = asyncHandler(async (req, res, next) => {
-  const isuserExist = await User.findById(req.params._id);
+  const isuserExist = await User.findById(req.params.id);
   if (!isuserExist)
-    next(new ErrorResponse(`user with id ${req.params._id} not exist`, 404));
-  const user = await User.findByIdAndUpdate(req.params._id, req.body, {
+    next(new ErrorResponse(`user with id ${req.params.id} not exist`, 404));
+  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
   res.status(200).json({
@@ -98,17 +99,13 @@ const sendTokenResponse = (user, statusCode, req, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true
+    httpOnly: true,
   };
 
-  res
-    .status(statusCode)
-    .cookie('token', token, options)
-    .json({
-      success: true,
-      token
-    });
-  
+  res.status(statusCode).cookie("token", token, options).json({
+    success: true,
+    token,
+  });
 };
 module.exports = {
   getAllUser,

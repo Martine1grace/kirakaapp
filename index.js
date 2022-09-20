@@ -15,8 +15,7 @@ require('dotenv').config()
 const app = express()
  swaggerDocs(app, process.env.PORT);
 
-// const connDB = require('./config/dbConn')
-// connDB()
+
 
 app.use(express.json())
 
@@ -33,7 +32,6 @@ app.use('/user', require('./routes/user'))
 app.use('/comment', require('./routes/comment'))
 app.use('/announcement', require('./routes/announcement'))
 app.use(errorHandler)
-
 
 
 mongoose.connect('mongodb+srv://grace:Grace321@cluster0.6no6els.mongodb.net/?retryWrites=true&w=majority')

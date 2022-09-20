@@ -1,11 +1,23 @@
-const express = require('express')
-const app = express()
+const express = require("express");
+const { protected, authorize } = require("../middlewares/auth");
 
-const {getAllComment, createComment, getOneComment, deleteOneComment, updateComment} = require('../controllers/comment')
+const app = express();
 
-const routes = express.Router()
+const {
+  getAllComment,
+  createComment,
+  getOneComment,
+  deleteOneComment,
+  updateComment,
+} = require("../controllers/comment");
 
-routes.route('/:_id').get(getOneComment).delete(deleteOneComment).patch(updateComment)
-routes.route('/').get(getAllComment).post(createComment)
+const routes = express.Router();
 
-module.exports = routes
+routes
+  .route("/:_id")
+  .get(protected, getOneComment)
+  .delete(protected, authorize("admin"), deleteOneComment)
+  .patch(protected, updateComment);
+routes.route("/").get(protected, getAllComment).post(protected, createComment);
+
+module.exports = routes;
