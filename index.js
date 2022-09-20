@@ -7,6 +7,7 @@ const cors = require('cors')
 
 const swaggerDocs = require('./public/api-docs/swagger');
 const errorHandler = require('./middlewares/error')
+const { Console } = require('console')
 
 require('dotenv').config()
 
@@ -14,8 +15,8 @@ require('dotenv').config()
 const app = express()
  swaggerDocs(app, process.env.PORT);
 
-const connDB = require('./config/dbConn')
-connDB()
+// const connDB = require('./config/dbConn')
+// connDB()
 
 app.use(express.json())
 
@@ -33,7 +34,11 @@ app.use('/comment', require('./routes/comment'))
 app.use('/announcement', require('./routes/announcement'))
 app.use(errorHandler)
 
-mongoose.connection.once('open', ()=>{
-    console.log('DB connected successfully')
-    app.listen(process.env.PORT || 3500,()=>{console.log(`server is running on port ${process.env.PORT}`)})
-})
+
+
+mongoose.connect('mongodb+srv://grace:Grace321@cluster0.6no6els.mongodb.net/?retryWrites=true&w=majority')
+console.log("DB has been connected");
+
+app.listen(process.env.PORT || 3500, () => {
+    console.log(`Server running at :${process.env.PORT }/`);
+  });
